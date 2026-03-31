@@ -196,16 +196,7 @@ values: |
               - ".*_created$"
               - "go_.*"
               - "process_.*"
-      cumulativeToDelta:
-        metrics:
-          include:
-            metrics:
-                - ".*metric.*"
-            match_type: regexp
-            metric_types:
-              - cumulative
-              - histogram
-              - sum
+     cumulativetodelta: {}
                   
     receivers:
       jaeger:
