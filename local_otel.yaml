@@ -1,0 +1,141 @@
+exporters:
+  debug: {}
+  # OTLP HTTP Exporter - Primary exporter as requested
+  otlphttp:
+    endpoint: "https://cpu24339.live.dynatrace.com/api/v2/otlp"
+    headers:
+      Authorization: "Api-Token ${env:DYNATRACE_API_TOKEN}"
+    compression: gzip
+    timeout: 30s
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
+    sending_queue:
+      enabled: true
+      num_consumers: 8
+      queue_size: 1000
+    tls:
+      insecure: false
+      insecure_skip_verify: true
+
+extensions:
+  health_check:
+    endpoint: "0.0.0.0:13133"
+
+processors:
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+    send_batch_max_size: 2048
+  memory_limiter:
+    check_interval: 5s
+    # Using absolute MiB values - percentages require k8s cgroup limits and won't work on bare Linux
+    limit_mib: 512
+    spike_limit_mib: 128
+  filter/dynatrace:
+    metrics:
+      exclude:
+        match_type: regexp
+        metric_names:
+          # Allow ALL otelcol metrics temporarily for troubleshooting
+          # - "otelcol_.*"
+          # Block less critical metrics
+          - "promhttp_.*_total$"
+          - ".*_handler_errors_total$"
+          - ".*_duration_seconds$"
+          - ".*_created$"
+          - "go_.*"
+          - "process_.*"
+  cumulativetodelta: {}
+  resource:
+    attributes:
+      - key: host.name
+        value: "felvqmon1164"
+        action: upsert
+      - key: service.instance.id
+        value: "felvqmon1164-otel-collector"
+        action: upsert
+
+receivers:
+  jaeger:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:14250"
+      thrift_http:
+        endpoint: "0.0.0.0:14268"
+      thrift_compact:
+        endpoint: "0.0.0.0:6831"
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: opentelemetry-collector
+          scrape_interval: 10s
+          static_configs:
+            - targets:
+                - "127.0.0.1:8888"
+  zipkin:
+    endpoint: "0.0.0.0:9411"
+
+service:
+  telemetry:
+    logs:
+      level: "debug"
+      development: false
+      encoding: "json"
+      disable_caller: false
+      disable_stacktrace: false
+      output_paths: ["stdout"]
+      error_output_paths: ["stderr"]
+    metrics:
+      level: detailed
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: "0.0.0.0"
+                port: 8888
+  extensions:
+    - health_check
+  pipelines:
+    logs:
+      exporters:
+        - debug
+        - otlphttp
+      processors:
+        - memory_limiter
+        - resource
+        - batch
+      receivers:
+        - otlp
+    metrics:
+      exporters:
+        - debug
+        - otlphttp
+      processors:
+        - memory_limiter
+        - resource
+        - cumulativetodelta
+        - batch
+      receivers:
+        - otlp
+        - prometheus
+    traces:
+      exporters:
+        - debug
+        - otlphttp
+      processors:
+        - memory_limiter
+        - resource
+        - batch
+      receivers:
+        - otlp
+        - jaeger
+        - zipkin
