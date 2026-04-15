@@ -1,0 +1,4 @@
+https://www.google.com/search?smstk=ChhoZWtDOXdkMXA2WEkzR2lSOGlBSWcvZz0QAQ%3D%3D&smstidx=1&q=can+Dynatrace+one+agent+be+used+to+instrument+the+open+source+OpenTelemetry+collector+app+running+on+K8s&udm=50&csuir=1&aep=34&kgs=e20a3162f06c873b&shem=aimbimspwouoe&shndl=37&shmd=H4sIAAAAAAAA_3WPMUsEMRCFOW2OawRLq8FScOM1InKlnYWNfZhNhiSwmYTJLHvb3e_xF_gb_FXmQCuxGx7ve2_e7uNid7lSuzlE1dqejVmWZQhNUZMbXMmmEYqL91VKLgZTti2ikNU455ExTUPlcHv9S4dSwkQDJnMXHTK8rIwq6AgKE2AgVhgJ5kYetEDipjLns6qxeyoxtDJL97_1-50myqSygivTRE6LANYKMjMnDj0TXp_a8XR12nxuvzb2vw0p9-ZmRkH2nfv5Mtgg6FMvN_vjH812nj2Kt_vHB1_PM78B19gQPC0BAAA&shmds=v1_ATWGeeOTsIOr_lehJNKgwFZ97lI3iuIFrj1cg3WvUWM9jibiKg&source=sh%2Fx%2Faim%2Fm1%2F1
+
+
+link shared by mike 
